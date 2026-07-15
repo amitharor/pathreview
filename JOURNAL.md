@@ -17,7 +17,7 @@ PathReview's agent layer has a GitHub tool (`agent/tools/github_tool.py`) that p
 
 **Setup confirmation:** [x] App runs locally at localhost:5173
 
-**Cohort ledger:** [ ] Issue added to cohort ledger
+**Cohort ledger:** [x] Issue added to cohort ledger
 
 ### Is this issue right for me? Scope reasoning
 
