@@ -38,12 +38,12 @@ This is my first time contributing to a codebase this large, so a Tier 1 "good f
 
 ## Week 8: Reproduction and solution planning
 
-**Reproduction commit link:** [fill in after pushing, link to the test commit]
+**Reproduction commit link:** https://github.com/amitharor/pathreview/commit/ffc23b7
 
 **Reproduction summary:**
 I added a unit test that mocks httpx and calls GitHubTool.execute, then asserts the returned metadata contains a has_tests key. The test fails on that assertion because _fetch_repo_metadata only sets has_readme, so the returned dict has has_readme True but no has_tests at all. That failure confirms the field is genuinely missing in my local environment.
 
-**PLAN.md link:** [fill in after pushing, link to PLAN.md on the branch]
+**PLAN.md link:** https://github.com/amitharor/pathreview/blob/feat/50-repo-analysis-has-tests/PLAN.md
 
 **Walkthrough video (recommended):** [optional Loom link, not graded]
 
