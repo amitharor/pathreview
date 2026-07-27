@@ -35,3 +35,17 @@ This is my first time contributing to a codebase this large, so a Tier 1 "good f
 * Backing services start in the background with `docker compose up` (Postgres on 5433, Redis on 6379). ChromaDB's 0.4.22 image currently crashes on start because of an upstream NumPy 2.0 change (`np.float_` was removed), but it is not needed to run the frontend, and `make setup` and `make run` both finish without it.
 * `make setup` applied migrations 001 and 002, seeded the test accounts (user1@example.com through user3@example.com), and installed the frontend dependencies.
 * `make run` serves the frontend at http://localhost:5173 and the API at http://localhost:8000/docs, and I confirmed both return HTTP 200.
+
+## Week 8: Reproduction and solution planning
+
+**Reproduction commit link:** [fill in after pushing, link to the test commit]
+
+**Reproduction summary:**
+I added a unit test that mocks httpx and calls GitHubTool.execute, then asserts the returned metadata contains a has_tests key. The test fails on that assertion because _fetch_repo_metadata only sets has_readme, so the returned dict has has_readme True but no has_tests at all. That failure confirms the field is genuinely missing in my local environment.
+
+**PLAN.md link:** [fill in after pushing, link to PLAN.md on the branch]
+
+**Walkthrough video (recommended):** [optional Loom link, not graded]
+
+**Blockers or open questions:**
+Still deciding how deep the test detection should look. A root contents listing is simple but misses nested test folders, while the recursive trees API is more thorough but needs the default branch and adds cost. I will settle this in Week 9.
