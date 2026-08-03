@@ -67,7 +67,7 @@ None. I decided to scope detection to the repository root listing rather than a 
 
 ### Check-in 2 (end of week)
 
-**PR link:** [fill in after the PR is opened]
+**PR link:** https://github.com/ascherj/pathreview/pull/619
 
 **Branch:** `feat/50-repo-analysis-has-tests`
 
