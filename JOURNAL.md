@@ -49,3 +49,37 @@ I added a unit test that mocks httpx and calls GitHubTool.execute, then asserts 
 
 **Blockers or open questions:**
 Still deciding how deep the test detection should look. A root contents listing is simple but misses nested test folders, while the recursive trees API is more thorough but needs the default branch and adds cost. I will settle this in Week 9.
+
+## Week 9: Solution building and PR submission
+
+### Check-in 1 (mid-week)
+
+**Current progress:**
+I finished PLAN.md sub-tasks 1 through 4. I added the _has_tests helper to agent/tools/github_tool.py, mirroring the existing _has_readme guard, and inserted has_tests next to has_readme in the _fetch_repo_metadata output. The helper reads the repository root listing and checks for a tests or test directory, a pytest.ini, an __tests__ or spec folder, or a root test_*.py file.
+
+**Next steps:**
+Finish sub-task 5 by expanding tests/unit/test_github_tool.py into full coverage, then run the quality gates and open the pull request.
+
+**Blockers:**
+None. I decided to scope detection to the repository root listing rather than a recursive tree walk, so a single contents call keeps the change small and easy to test.
+
+---
+
+### Check-in 2 (end of week)
+
+**PR link:** [fill in after the PR is opened]
+
+**Branch:** `feat/50-repo-analysis-has-tests`
+
+**What you built:**
+GitHubTool now reports a has_tests boolean alongside has_readme. A new _has_tests helper fetches the repository root contents and returns True when it finds a common test location, so the reviewer finally gets a test signal for a candidate's projects.
+
+**Tests added or updated:**
+Expanded tests/unit/test_github_tool.py. It covers has_tests being present and True when a tests directory exists, False when no test location is found, detection of a pytest.ini and of a root test_*.py file, a swallowed network error returning False, and the missing input validation path. All six tests pass.
+
+**Self-review confirmation:** [x] make check passes  [x] make test-unit passes
+
+**Pre-existing failures note:**
+This working copy has failures that predate my change, so here "passes" means my change introduces no new ones. Baseline before my change was 54 failed and 375 passed in make test-unit, and mypy reported 5 errors from missing type stubs (jose, passlib, rank_bm25) and a numpy stub that needs Python 3.12 or newer. After my change it is 53 failed and 381 passed, so my reproduction test now passes, my six new tests pass, and no new failure appears. My added code is ruff and black clean. The only lint or format noise in agent/tools/github_tool.py is pre-existing drift in lines I did not touch.
+
+**Draft PR feedback received from:** none
