@@ -83,3 +83,34 @@ Expanded tests/unit/test_github_tool.py. It covers has_tests being present and T
 This working copy has failures that predate my change, so here "passes" means my change introduces no new ones. Baseline before my change was 54 failed and 375 passed in make test-unit, and mypy reported 5 errors from missing type stubs (jose, passlib, rank_bm25) and a numpy stub that needs Python 3.12 or newer. After my change it is 53 failed and 381 passed, so my reproduction test now passes, my six new tests pass, and no new failure appears. My added code is ruff and black clean. The only lint or format noise in agent/tools/github_tool.py is pre-existing drift in lines I did not touch.
 
 **Draft PR feedback received from:** none
+
+## Week 10: Iteration and reflection
+
+### Reviewer feedback
+
+**Feedback received:** [ ] Yes  [x] No, still awaiting review
+
+**Summary of feedback:**
+No review has come in. Reviewer feedback is not part of the Summer 2026 run of this module, and my pull request (ascherj/pathreview #619) shows no comments or reviews as of this entry.
+
+**How you responded:**
+There was nothing to respond to, so I left the pull request open and ready for review. If a maintainer does comment later, I plan to read the feedback in full, make the changes I agree with, and reply on the specific points where I want to explain a choice, for example my decision to scope test detection to the repository root.
+
+---
+
+### Reflection
+
+**What was harder than you expected?**
+The fix itself was small, since I mirrored the existing _has_readme helper, so the hard part was everything around it. Proving my change was safe was surprisingly difficult because this working copy already had 54 failing unit tests before I touched a single line, and the virtual environment was running Python 3.14 while the project targets 3.11, which threw mypy stub errors that had nothing to do with my code. Separating my one intended failure, the Week 8 reproduction test, from that pile of unrelated noise took real care. I ended up stashing my changes to capture a clean baseline, then comparing before and after (54 failed down to 53 failed) to show I had added nothing new.
+
+**What did you learn about working in a large codebase?**
+Contributing to someone else's production code is mostly reading, not writing. My actual change was one dictionary key and a small helper, but I spent far more time tracing who consumes the GitHubTool output. I confirmed that the orchestrator in agent/orchestrator.py stores the whole data dict and that nothing in api/schemas reads a fixed set of keys, so adding a field would not break anything downstream. I also learned to respect the patterns already there instead of inventing my own. I copied the shape and error handling of _has_readme exactly and reused the same test detection vocabulary that ingestion/parsers/repo_analyzer.py already used, so the change reads like it belongs. In my own projects I would have just added the field and moved on.
+
+**How did AI tools help, and where did they fall short?**
+AI was most useful for orientation and pattern matching. It quickly mapped the two similarly named repo analysis paths, the agent GitHubTool versus the ingestion RepoAnalyzer that already had a _detect_tests, so I targeted the right file, and it surfaced the exact mocking convention the repo uses, patching the httpx module, so my tests matched the house style. Where it fell short was the judgment calls that needed real context. Deciding how deep the test detection should go, a single root contents call versus a recursive tree walk, and untangling which failures were pre-existing versus mine, both required me to run the code, read the actual output, and make the call myself. AI could lay out the tradeoff but could not decide it for me.
+
+**What would you do differently if you started over?**
+I would set up the environment carefully at the very start. I ran my tests against a Python 3.14 environment, which surfaced stub and collection errors that cost time to explain and separate from my work, and matching the project's 3.11 target from day one would have removed that noise. On process, I would open the draft pull request earlier in the week rather than near the end, so there was more room for feedback. I would also confirm the exact pull request target sooner, since mine routed to ascherj/pathreview rather than the jamjamgobambam fork I first assumed, because jamjamgobambam is itself a fork and GitHub defaults the base to the root parent.
+
+**What are you most proud of from this module?**
+I am most proud of how disciplined the change stayed. It would have been easy to let the formatter rewrite the whole file or to quietly work around the pre-existing failures, but instead I kept the diff to exactly the two things the issue asked for, left the unrelated formatting drift alone, and documented the pre-existing failures honestly in both the pull request and this journal so a reviewer knows precisely what I did and did not touch. The fix is small, but it is clean, tested, and easy to trust.
